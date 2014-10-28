@@ -1,0 +1,89 @@
+<!-- template.html -->
+<html>
+  <head>
+    <title>Weather</title>
+    <script src="http://fb.me/react-0.11.2.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.11.2.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+
+	<!-- Firebase JS -->
+  	<script src="https://cdn.firebase.com/js/client/1.0.17/firebase.js"></script>
+
+	<!-- ReactFire -->
+	<script src="https://cdn.firebase.com/libs/reactfire/0.3.0/reactfire.min.js"></script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+	<style type="text/css">
+			body {
+		  padding-top: 20px;
+		}
+		#main {
+		  padding: 40px 15px;
+		}
+
+		.weatherTemp {
+			font-size: 72pt;
+		}
+
+		.weatherStation {
+			font-size: 14pt;
+		}
+
+	</style>
+  </head>
+  <body>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	      <div class="container">
+	        <div class="navbar-header">
+	          <a class="navbar-brand" href="#">Weather</a>
+	        </div>
+	        <div class="collapse navbar-collapse">
+	        </div><!--/.nav-collapse -->
+	      </div>
+	    </div>
+
+	    <div class="container">
+
+	      <div className="row" id="main">
+	   			<div id="weatherItems">
+	    		</div>
+    		</div>
+
+		<script type="text/jsx">
+      /** @jsx React.DOM */
+      	var BASE_FIREBASE = "https://resplendent-fire-4023.firebaseio.com";
+		var WeatherItems = React.createClass({
+		    mixins: [ReactFireMixin],
+			
+			getInitialState: function() {
+			    return {temperature: 0,station: "test"};
+			  },
+
+		  componentWillMount: function() {
+			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/temperature"), "temperature");
+			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/station"), "station");
+		  },
+
+	  	  render: function() {
+		    return (<div className="col-md-2">
+		    			<div className="weatherTemp">{ this.state.temperature }&deg;</div><br/>
+		    			<div className="weatherStation">{ this.state.station }</div>
+		    		</div>
+		    		);
+		  }
+		});
+
+		React.renderComponent(<WeatherItems />, document.getElementById("weatherItems"));
+    </script>
+
+   	 </div><!-- /.container -->
+  </body>
+</html>
