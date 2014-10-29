@@ -30,12 +30,19 @@
 		}
 
 		.weatherTemp {
-			font-size: 72pt;
+			font-size: 100pt;
 		}
 
 		.weatherStation {
 			font-size: 14pt;
+			text-align: center;
 		}
+
+		.currentTime {
+			margin-top: 45px;
+			font-size: 60pt;
+		}
+
 
 	</style>
   </head>
@@ -52,36 +59,64 @@
 
 	    <div class="container">
 
-	      <div className="row" id="main">
-	   			<div id="weatherItems">
+	        <div class="row" id="main">
+	   			<div class="col-md-2">
+	   				<div id="weatherTemp">
+	   				</div>
+	   				<br/>
+	   				<div id="weatherStation">
+	   				</div>
+	    		</div>
+	    		<div class="col-md-2 col-md-offset-7 currentTime">
+	  				19:00
+	    		</div>
+    		</div>
+    		<div class="row" id="main">
+	   			<div class="col-md-2">
 	    		</div>
     		</div>
 
 		<script type="text/jsx">
       /** @jsx React.DOM */
       	var BASE_FIREBASE = "https://resplendent-fire-4023.firebaseio.com";
-		var WeatherItems = React.createClass({
+		
+		var WeatherTemperature = React.createClass({
 		    mixins: [ReactFireMixin],
 			
 			getInitialState: function() {
-			    return {temperature: 0,station: "test"};
+			    return {temperature: 0};
 			  },
 
 		  componentWillMount: function() {
 			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/temperature"), "temperature");
-			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/station"), "station");
 		  },
 
 	  	  render: function() {
-		    return (<div className="col-md-2">
-		    			<div className="weatherTemp">{ this.state.temperature }&deg;</div><br/>
-		    			<div className="weatherStation">{ this.state.station }</div>
-		    		</div>
+		    return (<div className="weatherTemp">{ this.state.temperature }&deg;</div>
 		    		);
 		  }
 		});
 
-		React.renderComponent(<WeatherItems />, document.getElementById("weatherItems"));
+		React.renderComponent(<WeatherTemperature />, document.getElementById("weatherTemp"));
+
+		var WeatherStation = React.createClass({
+		    mixins: [ReactFireMixin],
+			
+			getInitialState: function() {
+			    return {station: "test"};
+			  },
+
+		  componentWillMount: function() {
+			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/station"), "station");
+		  },
+
+	  	  render: function() {
+		    return (<div className="weatherStation">From: { this.state.station }</div>
+		    		);
+		  }
+		});
+
+		React.renderComponent(<WeatherStation />, document.getElementById("weatherStation"));
     </script>
 
    	 </div><!-- /.container -->
