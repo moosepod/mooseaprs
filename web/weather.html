@@ -47,53 +47,55 @@
 	</style>
   </head>
   <body>
-	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	      <div class="container">
-	        <div class="navbar-header">
-	          <a class="navbar-brand" href="#">Weather</a>
-	        </div>
-	        <div class="collapse navbar-collapse">
-	        </div><!--/.nav-collapse -->
-	      </div>
-	    </div>
+
 
 	    <div class="container">
 
 	        <div class="row" id="main">
-	   			<div class="col-md-2">
-	   				<div id="weatherTemp">
-	   				</div>
+	   			<div class="col-md-3">
+	   				<div id="weatherTemp"></div>
 	   				<br/>
-	   				<div id="weatherStation">
-	   				</div>
+	   				<div id="weatherStation"></div>
 	    		</div>
-	    		<div class="col-md-2 col-md-offset-7 currentTime">
-	  				19:00
-	    		</div>
-    		</div>
-    		<div class="row" id="main">
-	   			<div class="col-md-2">
+	    		<div class="col-md-3 col-md-offset-5 ">
+	  				<div id="currentTime"></div>
 	    		</div>
     		</div>
 
 		<script type="text/jsx">
       /** @jsx React.DOM */
       	var BASE_FIREBASE = "https://resplendent-fire-4023.firebaseio.com";
+
+      	function formatCelsius(deg) {
+      		return deg + String.fromCharCode(176) + 'C';
+      	} 
+
+      	function formatFahrenheit(deg) {
+      		return ((deg*9/5) + 32) + String.fromCharCode(176) + 'F';
+      	} 
+
+      	var tempFormatter = formatFahrenheit;
 		
 		var WeatherTemperature = React.createClass({
 		    mixins: [ReactFireMixin],
 			
 			getInitialState: function() {
-			    return {temperature: 0};
+			    return {temperature: 'loading'};
 			  },
 
 		  componentWillMount: function() {
+		  	  // Assumption is temp is in celsius
 			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/temperature"), "temperature");
 		  },
 
 	  	  render: function() {
-		    return (<div className="weatherTemp">{ this.state.temperature }&deg;</div>
+	  	  	if (this.state.temperature != "loading") {
+	  	  		var formattedTemp = tempFormatter(this.state.temperature);
+		    	return (<div className="weatherTemp">{ formattedTemp }</div>
 		    		);
+		    }
+
+			return (<div></div>);
 		  }
 		});
 
@@ -103,7 +105,7 @@
 		    mixins: [ReactFireMixin],
 			
 			getInitialState: function() {
-			    return {station: "test"};
+			    return {station: "loading"};
 			  },
 
 		  componentWillMount: function() {
@@ -111,12 +113,50 @@
 		  },
 
 	  	  render: function() {
-		    return (<div className="weatherStation">From: { this.state.station }</div>
+	  	  	if (this.state.station != "loading") {
+			    return (<div className="weatherStation">{ this.state.station }</div>
 		    		);
+			}
+
+			return (<div></div>);
+		  }
+		});
+		
+		React.renderComponent(<WeatherStation />, document.getElementById("weatherStation"));
+
+		var CurrentTime = React.createClass({
+			getFormattedTime: function() {
+				var currentDate = new Date(); 
+				var minutes =  currentDate.getMinutes();
+				if (minutes < 10) {
+					minutes = '0' + minutes;
+				}
+				return '' + currentDate.getHours() + ':' + minutes;
+			},
+
+			tick: function() {
+				this.setState({currentTimeFormatted: this.getFormattedTime()});
+			},
+
+			componentWillUnmount: function() {
+			    clearInterval(this.interval);
+			  },
+
+			componentDidMount: function() {
+			    this.interval = setInterval(this.tick, 100*60);
+			  },
+
+			getInitialState: function() {
+			    return {currentTimeFormatted: this.getFormattedTime()};
+			  },
+
+		  	 render: function() {
+			    return (<div className="currentTime">{ this.state.currentTimeFormatted }</div>
+			    		);
 		  }
 		});
 
-		React.renderComponent(<WeatherStation />, document.getElementById("weatherStation"));
+		React.renderComponent(<CurrentTime />, document.getElementById("currentTime"));
     </script>
 
    	 </div><!-- /.container -->
