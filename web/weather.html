@@ -52,13 +52,8 @@
 	    <div class="container">
 
 	        <div class="row" id="main">
-	   			<div class="col-md-3">
-	   				<div id="weatherTemp"></div>
-	   				<br/>
-	   				<div id="weatherStation"></div>
-	    		</div>
-	    		<div class="col-md-3 col-md-offset-5 ">
-	  				<div id="currentTime"></div>
+	        	<div id="weatherBase">
+	   			
 	    		</div>
     		</div>
 
@@ -99,7 +94,6 @@
 		  }
 		});
 
-		React.renderComponent(<WeatherTemperature />, document.getElementById("weatherTemp"));
 
 		var WeatherStation = React.createClass({
 		    mixins: [ReactFireMixin],
@@ -122,7 +116,6 @@
 		  }
 		});
 		
-		React.renderComponent(<WeatherStation />, document.getElementById("weatherStation"));
 
 		var CurrentTime = React.createClass({
 			getFormattedTime: function() {
@@ -156,7 +149,28 @@
 		  }
 		});
 
-		React.renderComponent(<CurrentTime />, document.getElementById("currentTime"));
+
+		var WeatherBase = React.createClass({
+			
+			 getInitialState: function() {
+			    return {};
+			 },
+
+		  	 render: function() {
+			    return (<div>
+			    		<div className="col-md-3">
+			    	     <WeatherTemperature />
+			    	     <WeatherStation />
+  	    		       </div>
+	    		       <div className="col-md-3 col-md-offset-5 ">
+	  					<CurrentTime />
+	    			   </div>
+	    			   </div>
+	    		);
+		  }
+		});
+
+		React.renderComponent(<WeatherBase />, document.getElementById("weatherBase"));
     </script>
 
    	 </div><!-- /.container -->
