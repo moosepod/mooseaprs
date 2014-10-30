@@ -72,20 +72,10 @@
       	var tempFormatter = formatFahrenheit;
 		
 		var WeatherTemperature = React.createClass({
-		    mixins: [ReactFireMixin],
 			
-			getInitialState: function() {
-			    return {temperature: 'loading'};
-			  },
-
-		  componentWillMount: function() {
-		  	  // Assumption is temp is in celsius
-			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/temperature"), "temperature");
-		  },
-
 	  	  render: function() {
-	  	  	if (this.state.temperature != "loading") {
-	  	  		var formattedTemp = tempFormatter(this.state.temperature);
+	  	  	if (this.props.temperature != "loading") {
+	  	  		var formattedTemp = tempFormatter(this.props.temperature);
 		    	return (<div className="weatherTemp">{ formattedTemp }</div>
 		    		);
 		    }
@@ -96,19 +86,9 @@
 
 
 		var WeatherStation = React.createClass({
-		    mixins: [ReactFireMixin],
-			
-			getInitialState: function() {
-			    return {station: "loading"};
-			  },
-
-		  componentWillMount: function() {
-			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/station"), "station");
-		  },
-
 	  	  render: function() {
-	  	  	if (this.state.station != "loading") {
-			    return (<div className="weatherStation">{ this.state.station }</div>
+	  	  	if (this.props.station != "loading") {
+			    return (<div className="weatherStation">{ this.props.station }</div>
 		    		);
 			}
 
@@ -151,16 +131,23 @@
 
 
 		var WeatherBase = React.createClass({
-			
-			 getInitialState: function() {
-			    return {};
-			 },
+			mixins: [ReactFireMixin],
+
+			getInitialState: function() {
+			    return {temperature: 'loading', station: 'loading'};
+			  },
+
+		  componentWillMount: function() {
+		  	  // Assumption is temp is in celsius
+			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/temperature"), "temperature");
+			  this.bindAsObject(new Firebase(BASE_FIREBASE + "/current-weather/station"), "station");
+		  },
 
 		  	 render: function() {
 			    return (<div>
 			    		<div className="col-md-3">
-			    	     <WeatherTemperature />
-			    	     <WeatherStation />
+			    	     <WeatherTemperature temperature={ this.state.temperature }/>
+			    	     <WeatherStation station={ this.state.station } />
   	    		       </div>
 	    		       <div className="col-md-3 col-md-offset-5 ">
 	  					<CurrentTime />
